@@ -34,10 +34,9 @@ def elaborate_expert(question: str, answer: str, context: Optional[List[str]] = 
     # return response.choices[0].text.strip()
 
     # local LLM
-    # Load the text generation pipeline with the specified model
-    text_generator = pipeline('text-generation', model='mtgv/MobileLLaMA-1.4B-Chat')
+    text_generator = pipeline('text-generation', model='mtgv/MobileLLaMA-1.4B-Chat') # choose a better model
 
-    # Prepare input prompt
+    # preparing input prompt
     prompt = 'Draft an elaborate answer based on the question provided below. Do not change the provided facts and stay relevant to the question.\n'
     prompt += f'Question: {question}\n'
     prompt += f'Answer: {answer}\n'
@@ -49,8 +48,7 @@ def elaborate_expert(question: str, answer: str, context: Optional[List[str]] = 
 
     print(f'\nprompt: {prompt}\n')
 
-
-    # Generate explanation using the pipeline
+    # generate explanation using the pipeline
     explanation = text_generator(prompt, max_length=200, 
                                  return_full_text=False, 
                                  num_return_sequences=1, 

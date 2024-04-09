@@ -1,0 +1,9 @@
+geopy
+scipy
+torch
+transformers
+streamlit
+folium
+geopandas
+streamlit_folium
+shapely
