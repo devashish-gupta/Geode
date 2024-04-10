@@ -121,7 +121,7 @@ def main():
         # tests
         # patch_visualization_expert(patch=patch_location_expert(st.session_state.latest_query))
         # patch_visualization_expert(patch=point_location_expert(st.session_state.latest_query))
-        patch_visualization_expert(patch=precipitation_expert(point_location_expert(st.session_state.latest_query)))
+        # patch_visualization_expert(patch=precipitation_expert(point_location_expert(st.session_state.latest_query)))
         # patch_visualization_expert(
         #     patch=threshold_expert(
         #         precipitation_expert(
@@ -132,6 +132,23 @@ def main():
         #         threshold=0.6
         #     )
         # )
+        # patch_visualization_expert(patch=air_quality_expert(patch_location_expert(st.session_state.latest_query), parameter='us-epa-index'))
+        # patch_visualization_expert(patch=threshold_expert(air_quality_expert(patch_location_expert(st.session_state.latest_query)), threshold=0.5, mode='greater'))
+        # patch_visualization_expert(patch=air_quality_expert(point_location_expert(st.session_state.latest_query), mode='point')[1])
+        # patch_visualization_expert(patch=precipitation_expert(patch_location_expert(st.session_state.latest_query)))
+        # patch_visualization_expert(patch=humidity_expert(patch_location_expert(st.session_state.latest_query))) # todo inferring the mode automatically
+        # patch_visualization_expert(patch=elevation_expert(patch_location_expert(st.session_state.latest_query))) # todo inferring the mode automatically
+        # 
+        # patch = patch_location_expert(st.session_state.latest_query)
+        # patch_visualization_expert(
+        #     patch=intersection_expert(
+        #         patch1=threshold_expert(humidity_expert(patch), 0.4),
+        #         patch2=threshold_expert(precipitation_expert(patch), 0.1),
+        #         mode='raster'
+        #     )
+        # )
+        patch_visualization_expert(patch=temperature_expert(patch_location_expert(st.session_state.latest_query))) # todo inferring the mode automatically
+
 
         # generated code
         st.markdown("Generated code")

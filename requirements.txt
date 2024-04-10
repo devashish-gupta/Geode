@@ -7,3 +7,5 @@ folium
 geopandas
 streamlit_folium
 shapely
+matplotlib
+python-dotenv
