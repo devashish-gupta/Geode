@@ -6,51 +6,22 @@ import os, sys
 geode_dir = os.path.abspath(os.curdir)
 if geode_dir not in sys.path:
     sys.path.append(geode_dir)
+
 from experts.functional_experts import *
 from experts.model_experts import *  
 from experts.database_experts import *  
 from style import *
 
-# importing code generation pipeline
-# from codegen import generate_code, reset
-
-
-codes = ['''def compute_answer(question):
-                nearby_cities = proximity_expert('Atlanta', level='city', count=10)
-                no_rain_cities = []
-                for city in cities:
-                    prob = rain_prob_expert(point_location_expert(city), date='today')
-                    if prob < 0.05:
-                        no_rain_cities.append(city)
-
-                answer_text = elaborate_expert(question=question, 
-                    answer=data_to_text_expert(no_rain_cities))
-                return answer_text
-                answer_text = elaborate_expert(question=question, 
-                    answer=data_to_text_expert(no_rain_cities))
-                return answer_text
-                answer_text = elaborate_expert(question=question, 
-                    answer=data_to_text_expert(no_rain_cities))
-                return answer_text
-                answer_text = elaborate_expert(question=question, 
-                    answer=data_to_text_expert(no_rain_cities))
-                return answer_text
-''',
-'''
-def compute_answer(question):
-                answer_text = elaborate_expert(question=question, 
-                    answer=data_to_text_expert(no_rain_cities))
-                return answer_text
-''']
 
 st.set_page_config(page_title="Geode", layout="wide", page_icon="🪨")
 
 # setting up session states
-if "generated_code" not in st.session_state:
-    st.session_state["generated_code"] = [{'content': '# No code generated yet'}]
-if "messages" not in st.session_state:
-    st.session_state["messages"] = [{"role": "assistant", "content": "Ask me anything geospatial!"}]
+if 'generated_code' not in st.session_state:
+    st.session_state['generated_code'] = [{'content': '# No code generated yet'}]
+if 'messages' not in st.session_state:
+    st.session_state['messages'] = [{'role': 'assistant', 'content': 'Ask me anything geospatial!'}]
 st.session_state.latest_query = ''
+
 
 # global styling
 st.markdown(global_style_string, unsafe_allow_html=True)
@@ -62,7 +33,7 @@ def execute_code(code, trials=3):
     tries = 0
     while tries < trials:
         try:
-            ans, out_patch = exec(code)
+            ans, out_patch = exec(code) # TODO figure out observer injection
             break
         except:
             tries += 1
@@ -105,12 +76,12 @@ def main():
             conversation.chat_message("user", avatar='🧑').write(query)
 
             # generating code to solve the query
-            answer = "Hello from Geode"
-            # code = generate_code(base_prompt + prompt)
-            # answer, out_patch = exec(code)
+            # code = code_gen_expert(base_prompt + prompt)
+            code = code_gen_expert(query)
+            answer = "The answer to the query has been visualized in the map output"
             
             # displaying the answer and generated code, saving it
-            st.session_state.generated_code.append({'content': random.choice(codes)}) # put generated code here
+            st.session_state.generated_code.append({'content': code}) # put generated code here
             st.session_state.messages.append({"role": "assistant", "content": answer}) # put generated answer here
             conversation.chat_message("assistant", avatar='🪨').write(answer)
 
@@ -147,7 +118,8 @@ def main():
         #         mode='raster'
         #     )
         # )
-        patch_visualization_expert(patch=temperature_expert(patch_location_expert(st.session_state.latest_query))) # todo inferring the mode automatically
+        # patch_visualization_expert(patch=temperature_expert(patch_location_expert(st.session_state.latest_query))) # todo inferring the mode automatically
+        exec(st.session_state.generated_code[-1]['content']) # running mock code from backend
 
 
         # generated code

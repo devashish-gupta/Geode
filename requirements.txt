@@ -2,6 +2,9 @@ geopy
 scipy
 torch
 transformers
+optimum
+auto-gptq
+flask
 streamlit
 folium
 geopandas

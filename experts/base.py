@@ -34,6 +34,20 @@ class DataPoint():
 class GeoPatch():
     '''
     Primary class that represents a geospatial patch with vector/raster data
+
+    Attributes
+    ----------
+        type (PatchType): Type of geographical patch based on the data it contains.
+        raster_data (dict): Stores raster data and related information
+            - 'name' (str): Name of the raster data stored 
+            - 'type' (RasterType): Type of raster data stored, whether color, non_color or binary
+            - 'colormap' (str): 
+            - 'data': np.ndarray
+        vector_data (dict):
+            - 'location' ([float, float]): latitude and longitude of the location that the patch represents (mandatory)
+            - 'bbox' (List[float]): [min_lat, max_lat, min_lon, max_lon] bounding box coordinates of the boundary of the patch (mandatory)
+            - 'points' (List[DataPoint]): Data points corresponding to the patch, displayed on the map (optional)
+            - 'boundary' (List[shapely.geometry.Polygon]): Boundary polygon of the patch (mandatory)
     '''
     def __init__(
             self, 
@@ -64,13 +78,13 @@ class GeoPatch():
         '''
 
     def __str__(self):
-        return f"GeoPatch(\n\ttype = {self.type},\n\traster_data = {pformat(self.raster_data)},\n\tvector_data = {pformat(self.vector_data)}\n)"
+        return f"GeoPatch(\n\ttype = {self.type},\n\traster_data = {pformat(self.raster_data, indent=2)},\n\tvector_data = {pformat(self.vector_data, indent=2)}\n)"
 
-    def get_type(self) -> PatchType:
-        return self.type
+    # def get_type(self) -> PatchType:
+    #     return self.type
 
-    def set_type(self, type: PatchType):
-        self.type = type
+    # def set_type(self, type: PatchType):
+    #     self.type = type
 
     # raster data related methods
     def get_raster_data(self) -> Dict:

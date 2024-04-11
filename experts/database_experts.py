@@ -1,22 +1,23 @@
-from .base import GeoPatch, PatchType, RasterType, DataPoint
-from shapely.geometry.polygon import Polygon
-from geopy.geocoders import Nominatim
-from typing import Union, Tuple
-from dotenv import load_dotenv
-import os
+import os, copy
 import requests as req
-import copy
+from dotenv import load_dotenv
+from typing import Union, Tuple
+from geopy.geocoders import Nominatim
+from shapely.geometry.polygon import Polygon
+from .base import GeoPatch, PatchType, RasterType, DataPoint
 
 
 def point_location_expert(name: str) -> GeoPatch:
     '''
     Finds the geographic location of any place on the map by its name.
 
-    Parameters:
-        name (str): Name of the place for which the geo location has to be found
+    Parameters
+    ----------
+        name (str): Name of the place for which the geo-location has to be found.
 
-    Returns:
-        (lat, lon): Latitude and longitude of the location found.
+    Returns
+    -------
+        GeoPatch: Geographical patch with the location and boundary of the place.
     '''
     # edge case
     if name == '':
@@ -47,10 +48,12 @@ def patch_location_expert(name: str) -> GeoPatch:
     '''
     Finds the geographic location and boundary polygon of any place on the map by its name.
 
-    Parameters:
+    Parameters
+    ----------
         name (str): Name of the place for which the geo location has to be found
 
-    Returns:
+    Returns
+    -------
         GeoPatch: GeoPatch containing the location and boundary path of the found place.
     '''
     # edge case
@@ -98,11 +101,13 @@ def humidity_expert(patch: GeoPatch, mode: str = 'patch') -> Union[GeoPatch, Tup
     '''
     Retrieves humidity (%) values throughout a geographical patch as raster data, or at the central location of a patch based on mode.
 
-    Parameters:
+    Parameters
+    ----------
         patch (GeoPatch): Geographical patch for which the humidity is to be retrieved.
         mode (str): Possible values: ['patch', 'point']. To specify whether to retrieve humidity data for the entire patch or a single point.
 
-    Returns:
+    Returns
+    -------
         GeoPatch: patch with average precipitation in ml as raster data. (if mode == 'patch')
         float, GeoPatch: value of the humidity and the GeoPatch with a data point added for visualization, with the humidity value (if mode == 'point')
     '''
@@ -167,11 +172,13 @@ def precipitation_expert(patch: GeoPatch, mode: str = 'patch') -> Union[GeoPatch
     '''
     Retrieves precipitation values in mm throughout a geographical patch as raster data, or at the central location of a patch based on mode.
 
-    Parameters:
+    Parameters
+    ----------
         patch (GeoPatch): Geographical patch for which the precipitation is to be retrieved.
         mode (str): Possible values: ['patch', 'point']. To specify whether to retrieve precipitation data for the entire patch or a single point.
 
-    Returns:
+    Returns
+    -------
         GeoPatch: patch with precipitation as raster data.
         float, GeoPatch: value of the precipitation and the GeoPatch with a data point added for visualization, with the precipitation value (if mode == 'point')
     '''
@@ -236,11 +243,13 @@ def temperature_expert(patch: GeoPatch, mode: str = 'patch') -> Union[GeoPatch, 
     '''
     Retrieves temperature values (Celcius) throughout a geographical patch as raster data, or at the central location of a patch based on mode.
 
-    Parameters:
+    Parameters
+    ----------
         patch (GeoPatch): Geographical patch for which the temperature is to be retrieved.
         mode (str): Possible values: ['patch', 'point']. To specify whether to retrieve temperature data for the entire patch or a single point.
 
-    Returns:
+    Returns
+    -------
         GeoPatch: patch with temperature as raster data.
         float, GeoPatch: value of the temperature and the GeoPatch with a data point added for visualization, with the temperature value (if mode == 'point')
     '''
@@ -273,6 +282,7 @@ def temperature_expert(patch: GeoPatch, mode: str = 'patch') -> Union[GeoPatch, 
 
             out_patch = copy.deepcopy(patch)
             out_patch.set_raster_data_from_points(data_points, name='Temperature (°C)', type=RasterType.non_color, colormap='magma') # rbf regression
+            print(out_patch)
             return out_patch
 
         except req.exceptions.RequestException as e:
@@ -305,12 +315,14 @@ def air_quality_expert(patch: GeoPatch, parameter: str = 'pm2_5', mode: str = 'p
     '''
     Retrieves a particular air quality parameter throughout a geographical patch as raster data, or at the central location of a patch based on mode.
 
-    Parameters:
+    Parameters
+    ----------
         patch (GeoPatch): Geographical patch for which the air quality index is to be evaluated. patch has latitude and longitude information.
         parameter (str): The air quality parameter to be retrieved. Possible values: ['co', 'no2', 'o3', 'so2', 'pm2_5', 'pm10', 'us-epa-index']
         mode (str): Possible values: ['patch', 'point']. To specify whether to retrieve air quality data for the entire patch or a single point.
 
-    Returns:
+    Returns
+    -------
         GeoPatch: patch with the chosen air quality parameter plotted as raster data accessible as GeoPatch.raster_data['data'] (if mode == 'patch')
         float, GeoPatch: value of the air quality parameter and the GeoPatch with a data point added for visualization, with the air quality parameter value (if mode == 'point')
     '''
@@ -389,11 +401,13 @@ def elevation_expert(patch: GeoPatch, mode: str = 'patch') -> Union[GeoPatch, Tu
     '''
     Retrieves elevation values throughout a geographical patch as raster data, or at the central location of a patch based on mode.
 
-    Parameters:
+    Parameters
+    ----------
         patch (GeoPatch): Geographical patch for which the elevation is to be retrieved.
         mode (str): Possible values: ['patch', 'point']. To specify whether to retrieve elevation data for the entire patch or a single point.
 
-    Returns:
+    Returns
+    -------
         GeoPatch: patch with elevation (m) as raster data. (if mode == 'patch')
         float, GeoPatch: value of the elevation and the GeoPatch with a data point added for visualization, with the elevation value (if mode == 'point')
     '''

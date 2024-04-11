@@ -1,17 +1,19 @@
 
-from typing import List, Optional
+from typing import List
 from transformers import pipeline
 
-def elaborate_expert(question: str, answer: str, context: Optional[List[str]] = None) -> str:
+def elaborate_expert(question: str, answer: str, context: List[str] = None) -> str:
     '''
     Impute missing values in a patch using interpolation.
 
-    Parameters:
+    Parameters
+    ----------
         question (str): The query that was asked by the user
         answer (str): The final answer obtained as a result of code generation and execution
-        context (): Any intermediate results obtained during code execution, important for explaining the thought process behind the query solution
+        context (List[str]): Any intermediate results obtained during code execution, important for explaining the thought process behind the query solution
 
-    Returns:
+    Returns
+    -------
         str: Elaborate answer explaining the computation steps and final answer
     '''
     # if requesting an online LLM
