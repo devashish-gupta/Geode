@@ -1,5 +1,237 @@
 API Spec:
 
+class GeoPatch:
+    """
+    Primary class representing a geospatial patch with vector/raster data.
+
+    Attributes
+    ----------
+    type: PatchType
+        Type of geographical patch based on the data it contains.
+    raster_data: dict
+        Stores raster data and related information.
+        - 'name' (str): Name of the raster data stored.
+        - 'type' (RasterType): Type of raster data stored, whether color, non_color, or binary.
+        - 'colormap' (str): String representing a color name (optional).
+        - 'data' (np.ndarray): NumPy array containing the raster data.
+    vector_data: dict
+        Stores vector data and related information.
+        - 'location' ([float, float]): Latitude and longitude of the location that the patch represents (mandatory).
+        - 'bbox' (List[float]): Bounding box coordinates of the boundary of the patch [min_lat, max_lat, min_lon, max_lon] (mandatory).
+        - 'points' (List[DataPoint]): Data points corresponding to the patch, displayed on the map (optional).
+        - 'boundary' (List[shapely.geometry.Polygon]): Boundary polygon of the patch (mandatory).
+
+    Methods
+    ---------
+    get_raster_data()->Dict
+        Returns the raster_data present in the GeoPatch object
+    set_raster_data(property: raster_data)->None 
+        Sets the given raster_data property into the GeoPatch object. returns nothing.
+    set_raster_data_from_points(option_list: List[List[float]], name=None,type=None, colormap='gray')->None
+        sets the raster data for a list of list of points.
+    sample_random_points(num_points: int=10)->List
+        sets the random num_points of latitiude and longitude in the given bounding box.
+        Returns random points as a List.
+    get_vector_data()->Dict
+        gets the vector data from the object as Dictionary
+    set_vector_data(property: vector_data)->None
+        sets the given vector data into the object
+    get_boundary(boundary: List[Polygon])->None
+        gets the boundary box as List of Polygon data
+    get_bbox()->List[float]
+        gets the bounding box as List of floats
+    set_bbox(bbox: List[float])->None
+        sets the bounding box from the input List of floats
+    get_location()->List[float]
+        gets the location coordinates as list of floats
+    set_location(location: List[float])->None
+        sets the location from the list of floats
+    """
+    def __init__(
+            self, 
+            type: PatchType,
+            raster_data: Union[Image.Image, np.ndarray] = None, 
+            vector_data: Dict = None) -> None:
+        """
+        Initialize a GeoPatch instance.
+        
+        Parameters
+        ----------
+        type : PatchType
+            Type of the geographical patch.
+        raster_data : Union[Image.Image, np.ndarray], optional
+            Raster data and related information.
+        vector_data : Dict, optional
+            Vector data and related information.
+        """
+        self.type = type
+        self.raster_data = raster_data
+        self.vector_data = vector_data
+
+    def get_raster_data(self) -> Dict:
+        """
+        Get the raster data stored in the GeoPatch.
+        
+        Returns
+        -------
+        Dict
+            Raster data and related information.
+        """
+        Examples
+        --------
+        >>> # return the foo 
+        >>> 
+        
+        if self.raster_data is not None:
+        return self.raster_data
+
+    def set_raster_data(self, raster_data: Dict) -> None:
+        """
+        Set the raster data for the GeoPatch.
+        
+        Parameters
+        ----------
+        raster_data : Dict
+            Raster data and related information.
+        """
+        self.raster_data = raster_data
+
+    def set_raster_data_from_points(self, points: List[List[float]], name=None, type=None, colormap='gray') -> None:
+        """
+        Set the raster data from a list of points.
+        
+        Parameters
+        ----------
+        points : List[List[float]]
+            List of points.
+        name : str, optional
+            Name of the raster data.
+        type : RasterType, optional
+            Type of the raster data.
+        colormap : str, optional
+            Colormap for the raster data.
+        """
+        # Method implementation goes here
+
+    def sample_random_points(self, num_points: int = 10) -> List:
+        """
+        Sample random points within the patch's bounding box.
+        
+        Parameters
+        ----------
+        num_points : int, optional
+            Number of points to sample (default is 10).
+        
+        Returns
+        -------
+        List
+            List of randomly sampled points.
+        """
+        # Method implementation goes here
+
+    def get_vector_data(self) -> Dict:
+        """
+        Get the vector data stored in the GeoPatch.
+        
+        Returns
+        -------
+        Dict
+            Vector data and related information.
+        """
+        return self.vector_data
+    
+    def set_vector_data(self, vector_data) -> None:
+        """
+        Set the vector data for the GeoPatch.
+        
+        Parameters
+        ----------
+        vector_data : Dict
+            Vector data and related information.
+        """
+        self.vector_data = vector_data
+
+    def get_boundary(self) -> List[Polygon]:
+        """
+        Get the boundary polygon of the patch.
+        
+        Returns
+        -------
+        List[Polygon]
+            List of polygons representing the boundary.
+        """
+        return self.vector_data['boundary']
+
+    def set_boundary(self, boundary: List[Polygon]) -> None:
+        """
+        Set the boundary polygon of the patch.
+        
+        Parameters
+        ----------
+        boundary : List[Polygon]
+            List of polygons representing the boundary.
+        """
+        self.vector_data['boundary'] = boundary
+
+    def get_bbox(self) -> List[float]:
+        """
+        Get the bounding box coordinates of the patch.
+        
+        Returns
+        -------
+        List[float]
+            Bounding box coordinates [min_lat, max_lat, min_lon, max_lon].
+        """
+        if 'bbox' in self.vector_data:
+            return self.vector_data['bbox']
+        
+    def set_bbox(self, bbox: List[float]) -> None:
+        """
+        Set the bounding box coordinates of the patch.
+        
+        Parameters
+        ----------
+        bbox : List[float]
+            Bounding box coordinates [min_lat, max_lat, min_lon, max_lon].
+        """
+        self.vector_data['bbox'] = bbox
+
+    def get_location(self) -> List[float]:
+        """
+        Get the latitude and longitude of the patch.
+        
+        Returns
+        -------
+        List[float]
+            Latitude and longitude.
+        """
+        if 'location' in self.vector_data:
+            return self.vector_data['location']
+        return None
+    
+    def set_location(self, location: List[float]) -> None:
+        """
+        Set the latitude and longitude of the patch.
+        
+        Parameters
+        ----------
+        location : List[float]
+            Latitude and longitude.
+        """
+        self.vector_data['location'] = location
+
+    def __str__(self):
+        """
+        Return a string representation of the GeoPatch object.
+        
+        Returns
+        -------
+        str
+            String representation.
+        """
+        return f"GeoPatch(\n\ttype = {self.type},\n\traster_data = {pformat(self.raster_data, indent=2)},\n\tvector_data = {pformat(self.vector_data, indent=2)}\n)"
+
+
 point_location_expert(name)
 Finds the geographic location of any place on the map by its name.
 
