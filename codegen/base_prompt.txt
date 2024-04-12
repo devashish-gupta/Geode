@@ -1,19 +1,42 @@
-API Spec:
+# API specification:
 
-class GeoPatch:
-    """
+# helper classes
+class RasterType(Enum):
+    '''
+    Enum representing the type of raster data stored in a patch.
+    '''
+    color = 0
+    non_color = 1
+    binary = 2
+
+class DataPoint():
+    '''
+    Represents the data associated a particular point marker on the map.
+    
+    Attributes
+    ----------
+    point (shapely.geometry.Point): Stores the latitude and longitude of the data point in x and y.
+    name (str): Name of the point, displayed within the tooltip on the map
+    data (float): Any numerical value which can represent quanities like temperature, humidity etc.
+    '''
+    def __init__(self, x, y, name: str, data: float = None):
+        self.point = Point(x, y)
+        self.name = name
+        self.data = data
+
+# main class
+class GeoPatch():
+    '''
     Primary class representing a geospatial patch with vector/raster data.
 
     Attributes
     ----------
-    type: PatchType
-        Type of geographical patch based on the data it contains.
     raster_data: dict
         Stores raster data and related information.
-        - 'name' (str): Name of the raster data stored.
-        - 'type' (RasterType): Type of raster data stored, whether color, non_color, or binary.
-        - 'colormap' (str): String representing a color name (optional).
-        - 'data' (np.ndarray): NumPy array containing the raster data.
+        - 'name' (str): Name of the raster data stored. (mandatory)
+        - 'type' (RasterType): Type of raster data stored, whether RasterType.color, RasterType.non_color, or RasterType.binary (mandatory)
+        - 'colormap' (str): String representing a color name. (optional)
+        - 'data' (np.ndarray): NumPy array containing the raster data. (mandatory)
     vector_data: dict
         Stores vector data and related information.
         - 'location' ([float, float]): Latitude and longitude of the location that the patch represents (mandatory).
@@ -22,203 +45,156 @@ class GeoPatch:
         - 'boundary' (List[shapely.geometry.Polygon]): Boundary polygon of the patch (mandatory).
 
     Methods
-    ---------
-    get_raster_data()->Dict
+    -------
+    get_raster_data() -> Dict
         Returns the raster_data present in the GeoPatch object
-    set_raster_data(property: raster_data)->None 
-        Sets the given raster_data property into the GeoPatch object. returns nothing.
-    set_raster_data_from_points(option_list: List[List[float]], name=None,type=None, colormap='gray')->None
+    set_raster_data(property: raster_data) -> None 
+        Sets the given raster_data property into the GeoPatch object.
+    set_raster_data_from_points(option_list: List[List[float]], name=None, type=None, colormap='gray') -> None
         sets the raster data for a list of list of points.
-    sample_random_points(num_points: int=10)->List
-        sets the random num_points of latitiude and longitude in the given bounding box.
-        Returns random points as a List.
-    get_vector_data()->Dict
+    get_vector_data() -> Dict
         gets the vector data from the object as Dictionary
-    set_vector_data(property: vector_data)->None
+    set_vector_data(property: vector_data) -> None
         sets the given vector data into the object
-    get_boundary(boundary: List[Polygon])->None
+    get_boundary(boundary: List[Polygon]) -> None
         gets the boundary box as List of Polygon data
-    get_bbox()->List[float]
+    get_bbox() -> List[float]
         gets the bounding box as List of floats
-    set_bbox(bbox: List[float])->None
-        sets the bounding box from the input List of floats
-    get_location()->List[float]
-        gets the location coordinates as list of floats
-    set_location(location: List[float])->None
-        sets the location from the list of floats
-    """
+    get_location() -> List[float]
+        Gets the location latitude and longitude as a list of floats
+
+    '''
     def __init__(
             self, 
             type: PatchType,
             raster_data: Union[Image.Image, np.ndarray] = None, 
             vector_data: Dict = None) -> None:
-        """
+        '''
         Initialize a GeoPatch instance.
         
         Parameters
         ----------
-        type : PatchType
-            Type of the geographical patch.
-        raster_data : Union[Image.Image, np.ndarray], optional
-            Raster data and related information.
-        vector_data : Dict, optional
-            Vector data and related information.
-        """
+        type (PatchType): Type of the geographical patch.
+        raster_data (Union[Image.Image, np.ndarray]): Raster data and related information (optional)
+        vector_data (Dict): Vector data and related information (optional)
+        '''
         self.type = type
         self.raster_data = raster_data
         self.vector_data = vector_data
 
     def get_raster_data(self) -> Dict:
-        """
+        '''
         Get the raster data stored in the GeoPatch.
         
         Returns
         -------
-        Dict
-            Raster data and related information.
-        """
-        Examples
-        --------
-        >>> # return the foo 
-        >>> 
-        
+        Dict: Raster data and related information.
+        ''' 
         if self.raster_data is not None:
-        return self.raster_data
+            return self.raster_data
 
     def set_raster_data(self, raster_data: Dict) -> None:
-        """
+        '''
         Set the raster data for the GeoPatch.
         
         Parameters
         ----------
-        raster_data : Dict
-            Raster data and related information.
-        """
+        raster_data (Dict): Raster data and related information.
+        '''
         self.raster_data = raster_data
 
     def set_raster_data_from_points(self, points: List[List[float]], name=None, type=None, colormap='gray') -> None:
-        """
-        Set the raster data from a list of points.
+        '''
+        Sets the raster data across the patch from a list of points
         
         Parameters
         ----------
-        points : List[List[float]]
-            List of points.
-        name : str, optional
-            Name of the raster data.
-        type : RasterType, optional
-            Type of the raster data.
-        colormap : str, optional
-            Colormap for the raster data.
-        """
-        # Method implementation goes here
-
-    def sample_random_points(self, num_points: int = 10) -> List:
-        """
-        Sample random points within the patch's bounding box.
-        
-        Parameters
-        ----------
-        num_points : int, optional
-            Number of points to sample (default is 10).
-        
-        Returns
-        -------
-        List
-            List of randomly sampled points.
-        """
-        # Method implementation goes here
+        points (List[List[float]]): List of points of the form [[lat0, lon0, value0], ...]
+        name (str): Name of the raster data (optional)
+        type (RasterType): Type of the raster data. Possible values: [RasterType.color, RasterType.non_color, RasterType.binary] (optional)
+        colormap (str): Colormap for the raster data.
+        '''
 
     def get_vector_data(self) -> Dict:
-        """
-        Get the vector data stored in the GeoPatch.
+        '''
+        Get the vector data stored in the GeoPatch, potentially containing 'points', 'boundary', 'location', 'bbox'.
         
         Returns
         -------
-        Dict
-            Vector data and related information.
-        """
+        Dict: Vector data and related information.
+        '''
         return self.vector_data
     
     def set_vector_data(self, vector_data) -> None:
-        """
-        Set the vector data for the GeoPatch.
+        '''
+        Set the vector data for the GeoPatch. Mandatory keys must be present.
         
         Parameters
         ----------
-        vector_data : Dict
-            Vector data and related information.
-        """
+        vector_data (Dict): Vector data and related information.
+        '''
         self.vector_data = vector_data
 
     def get_boundary(self) -> List[Polygon]:
-        """
-        Get the boundary polygon of the patch.
+        '''
+        Get the boundary polygon of the geographic location represented by the patch.
         
         Returns
         -------
-        List[Polygon]
-            List of polygons representing the boundary.
-        """
+        List[Polygon]: List of shapely.geometry.Polygon representing the boundary
+        '''
         return self.vector_data['boundary']
 
-    def set_boundary(self, boundary: List[Polygon]) -> None:
-        """
-        Set the boundary polygon of the patch.
-        
-        Parameters
-        ----------
-        boundary : List[Polygon]
-            List of polygons representing the boundary.
-        """
-        self.vector_data['boundary'] = boundary
-
     def get_bbox(self) -> List[float]:
-        """
+        '''
         Get the bounding box coordinates of the patch.
         
         Returns
         -------
-        List[float]
-            Bounding box coordinates [min_lat, max_lat, min_lon, max_lon].
-        """
+        List[float]: Bounding box coordinates [min_lat, max_lat, min_lon, max_lon]
+        '''
         if 'bbox' in self.vector_data:
             return self.vector_data['bbox']
-        
-    def set_bbox(self, bbox: List[float]) -> None:
-        """
-        Set the bounding box coordinates of the patch.
-        
-        Parameters
-        ----------
-        bbox : List[float]
-            Bounding box coordinates [min_lat, max_lat, min_lon, max_lon].
-        """
-        self.vector_data['bbox'] = bbox
 
     def get_location(self) -> List[float]:
-        """
+        '''
         Get the latitude and longitude of the patch.
         
         Returns
         -------
-        List[float]
-            Latitude and longitude.
-        """
+        List[float]: Latitude and longitude.
+        '''
         if 'location' in self.vector_data:
             return self.vector_data['location']
         return None
     
-    def set_location(self, location: List[float]) -> None:
-        """
-        Set the latitude and longitude of the patch.
-        
-        Parameters
-        ----------
-        location : List[float]
-            Latitude and longitude.
-        """
-        self.vector_data['location'] = location
+    
+# Here are all the geospatial experts you have access to as API calls:
+def point_location_expert(name: str) -> GeoPatch:
+    '''
+    Finds the geographic location of any place on the map by its name.
+
+    Parameters
+    ----------
+        name (str): Name of the place for which the geo-location has to be found.
+
+    Returns
+    -------
+        GeoPatch: Geographical patch with the location and boundary of the place.
+    '''
+
+def patch_location_expert(name: str) -> GeoPatch:
+    '''
+    Finds the geographic location and boundary polygon of any place on the map by its name.
+
+    Parameters
+    ----------
+        name (str): Name of the place for which the geo location has to be found
+
+    Returns
+    -------
+        GeoPatch: GeoPatch containing the location and boundary path of the found place.
+    '''
 
 def imputation_expert(patch: GeoPatch) -> GeoPatch:
     '''
@@ -226,7 +202,7 @@ def imputation_expert(patch: GeoPatch) -> GeoPatch:
 
     Parameters
     ----------
-        patch (GeoPatch): Input patch with missing values represented as NaN.
+        patch (GeoPatch): Input patch with missing values within patch.raster_data['data'] represented as NaN.
 
     Returns
     -------
@@ -260,15 +236,15 @@ def data_to_text_expert(data: any) -> str:
         str: String representation of the input data.
     '''
 
-def threshold_expert(patch: GeoPatch, threshold: float, mode: str = 'greater', relative=True) -> GeoPatch:
+def threshold_expert(patch: GeoPatch, threshold: float, mode: str = 'greater', relative: bool = True) -> GeoPatch:
     '''
-    Threshold the raster data within a GeoPatch by a percent threshold.
+    Threshold the raster data within a GeoPatch by a percent or absolute threshold.
 
     Parameters
     ----------
         patch (GeoPatch): A GeoPatch whose raster data is to be thresholded.
         threshold (float): Value between 0.0 and 1.0, the percent threshold.
-        mode (str): ('greater', 'less') Mode specifying the truth of a pixel value when compared to the threshold.
+        mode (str): Possible values: ['greater', 'less']. Mode specifying the truth of a pixel value when compared to the threshold.
         relative (bool): Whether to use a percent or absolute threshold.
 
     Returns
@@ -276,7 +252,7 @@ def threshold_expert(patch: GeoPatch, threshold: float, mode: str = 'greater', r
         GeoPatch: Patch with thresholded raster data, RasterType of the GeoPatch.raster_data changes to RasterType.binary
     '''
 
-def intersection_expert(patch1: GeoPatch, patch2: GeoPatch, mode='raster') -> GeoPatch:
+def intersection_expert(patch1: GeoPatch, patch2: GeoPatch, mode: str = 'raster') -> GeoPatch:
     '''
     Perform intersection between the vector or raster data within two geographical patches. 
     If raster intersection is to be performed, both patches should have RasterType.binary and cover identical geographical regions.
@@ -285,50 +261,11 @@ def intersection_expert(patch1: GeoPatch, patch2: GeoPatch, mode='raster') -> Ge
     ----------
         patch1 (GeoPatch): First patch
         patch2 (GeoPatch): Second patch
-        mode (str): Intersection mode, either 'vector' or 'raster'
+        mode (str): Intersection mode, Possible values: ['vector', 'raster']
 
     Returns
     -------
         GeoPatch: with required intersection present within vector or raster data.
-    '''
-
-def patch_visualization_expert(patch: GeoPatch) -> None:
-    '''
-    Visualize the vector and raster data within GeoPatch on a map
-
-    Parameters
-    ----------
-        patch (Union[GeoPatch, None]): A GeoPatch with vector/raster data to be visualized.
-
-    Returns
-    -------
-        None
-    '''
-
-def point_location_expert(name: str) -> GeoPatch:
-    '''
-    Finds the geographic location of any place on the map by its name.
-
-    Parameters
-    ----------
-        name (str): Name of the place for which the geo-location has to be found.
-
-    Returns
-    -------
-        GeoPatch: Geographical patch with the location and boundary of the place.
-    '''
-
-def patch_location_expert(name: str) -> GeoPatch:
-    '''
-    Finds the geographic location and boundary polygon of any place on the map by its name.
-
-    Parameters
-    ----------
-        name (str): Name of the place for which the geo location has to be found
-
-    Returns
-    -------
-        GeoPatch: GeoPatch containing the location and boundary path of the found place.
     '''
 
 def humidity_expert(patch: GeoPatch, mode: str = 'patch') -> Union[GeoPatch, Tuple[float, GeoPatch]]:
@@ -430,3 +367,23 @@ def elaborate_expert(question: str, answer: str, context: List[str] = None) -> s
     -------
         str: Elaborate answer explaining the computation steps and final answer
     '''
+
+# Instructions:
+You are a powerful code generation model which can solve geospatial queries using the experts you have access to. 
+Please write an implementation for a function 'compute_answer' using the expert API calls and classes you have access to, such that the answer to the query is obtained:
+
+# Query:
+{}
+
+# Your code should be exactly in this format:
+def compute_answer(query: str):
+    # implementation using expert API calls here
+
+    # returning a textual answer to the query and the most salient GeoPatch object to be used for visualization of the answer on a map
+    return answer, patch 
+result = compute_answer(query) # make sure you call the compute_answer function at the end and store the output in a variable called result
+
+# Here are some examples of queries and the corresponding code that solves the query:
+Query:
+Code:
+
