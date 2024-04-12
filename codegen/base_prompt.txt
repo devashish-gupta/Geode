@@ -1,162 +1,432 @@
 API Spec:
 
-point_location_expert(name)
-Finds the geographic location of any place on the map by its name.
+class GeoPatch:
+    """
+    Primary class representing a geospatial patch with vector/raster data.
 
-Parameters
-----------
-    name (str): Name of the place for which the geo location has to be found
+    Attributes
+    ----------
+    type: PatchType
+        Type of geographical patch based on the data it contains.
+    raster_data: dict
+        Stores raster data and related information.
+        - 'name' (str): Name of the raster data stored.
+        - 'type' (RasterType): Type of raster data stored, whether color, non_color, or binary.
+        - 'colormap' (str): String representing a color name (optional).
+        - 'data' (np.ndarray): NumPy array containing the raster data.
+    vector_data: dict
+        Stores vector data and related information.
+        - 'location' ([float, float]): Latitude and longitude of the location that the patch represents (mandatory).
+        - 'bbox' (List[float]): Bounding box coordinates of the boundary of the patch [min_lat, max_lat, min_lon, max_lon] (mandatory).
+        - 'points' (List[DataPoint]): Data points corresponding to the patch, displayed on the map (optional).
+        - 'boundary' (List[shapely.geometry.Polygon]): Boundary polygon of the patch (mandatory).
 
-Returns:
-    (lat, lon): Latitude and longitude of the location found.
+    Methods
+    ---------
+    get_raster_data()->Dict
+        Returns the raster_data present in the GeoPatch object
+    set_raster_data(property: raster_data)->None 
+        Sets the given raster_data property into the GeoPatch object. returns nothing.
+    set_raster_data_from_points(option_list: List[List[float]], name=None,type=None, colormap='gray')->None
+        sets the raster data for a list of list of points.
+    sample_random_points(num_points: int=10)->List
+        sets the random num_points of latitiude and longitude in the given bounding box.
+        Returns random points as a List.
+    get_vector_data()->Dict
+        gets the vector data from the object as Dictionary
+    set_vector_data(property: vector_data)->None
+        sets the given vector data into the object
+    get_boundary(boundary: List[Polygon])->None
+        gets the boundary box as List of Polygon data
+    get_bbox()->List[float]
+        gets the bounding box as List of floats
+    set_bbox(bbox: List[float])->None
+        sets the bounding box from the input List of floats
+    get_location()->List[float]
+        gets the location coordinates as list of floats
+    set_location(location: List[float])->None
+        sets the location from the list of floats
+    """
+    def __init__(
+            self, 
+            type: PatchType,
+            raster_data: Union[Image.Image, np.ndarray] = None, 
+            vector_data: Dict = None) -> None:
+        """
+        Initialize a GeoPatch instance.
+        
+        Parameters
+        ----------
+        type : PatchType
+            Type of the geographical patch.
+        raster_data : Union[Image.Image, np.ndarray], optional
+            Raster data and related information.
+        vector_data : Dict, optional
+            Vector data and related information.
+        """
+        self.type = type
+        self.raster_data = raster_data
+        self.vector_data = vector_data
 
-patch_location_expert(name)
-Finds the geographic location and boundary polygon of any place on the map by its name.
+    def get_raster_data(self) -> Dict:
+        """
+        Get the raster data stored in the GeoPatch.
+        
+        Returns
+        -------
+        Dict
+            Raster data and related information.
+        """
+        Examples
+        --------
+        >>> # return the foo 
+        >>> 
+        
+        if self.raster_data is not None:
+        return self.raster_data
 
-Parameters
-----------
-    name (str): Name of the place for which the geo location has to be found
+    def set_raster_data(self, raster_data: Dict) -> None:
+        """
+        Set the raster data for the GeoPatch.
+        
+        Parameters
+        ----------
+        raster_data : Dict
+            Raster data and related information.
+        """
+        self.raster_data = raster_data
 
-Returns:
-    GeoPatch: GeoPatch containing the location and boundary path of the found place.
+    def set_raster_data_from_points(self, points: List[List[float]], name=None, type=None, colormap='gray') -> None:
+        """
+        Set the raster data from a list of points.
+        
+        Parameters
+        ----------
+        points : List[List[float]]
+            List of points.
+        name : str, optional
+            Name of the raster data.
+        type : RasterType, optional
+            Type of the raster data.
+        colormap : str, optional
+            Colormap for the raster data.
+        """
+        # Method implementation goes here
 
-humidity_expert(patch, mode)
-Retrieves humidity (%) values throughout a geographical patch as raster data, or at the central location of a patch based on mode.
+    def sample_random_points(self, num_points: int = 10) -> List:
+        """
+        Sample random points within the patch's bounding box.
+        
+        Parameters
+        ----------
+        num_points : int, optional
+            Number of points to sample (default is 10).
+        
+        Returns
+        -------
+        List
+            List of randomly sampled points.
+        """
+        # Method implementation goes here
 
-Parameters
-----------
-    patch (GeoPatch): Geographical patch for which the humidity is to be retrieved.
-    mode (str): Possible values: ['patch', 'point']. To specify whether to retrieve humidity data for the entire patch or a single point.
+    def get_vector_data(self) -> Dict:
+        """
+        Get the vector data stored in the GeoPatch.
+        
+        Returns
+        -------
+        Dict
+            Vector data and related information.
+        """
+        return self.vector_data
+    
+    def set_vector_data(self, vector_data) -> None:
+        """
+        Set the vector data for the GeoPatch.
+        
+        Parameters
+        ----------
+        vector_data : Dict
+            Vector data and related information.
+        """
+        self.vector_data = vector_data
 
-Returns:
-    GeoPatch: patch with average precipitation in ml as raster data. (if mode == 'patch')
-    float, GeoPatch: value of the humidity and the GeoPatch with a data point added for visualization, with the humidity value (if mode == 'point')
+    def get_boundary(self) -> List[Polygon]:
+        """
+        Get the boundary polygon of the patch.
+        
+        Returns
+        -------
+        List[Polygon]
+            List of polygons representing the boundary.
+        """
+        return self.vector_data['boundary']
 
-precipitation_expert(patch, mode)
-Retrieves precipitation values in mm throughout a geographical patch as raster data, or at the central location of a patch based on mode.
+    def set_boundary(self, boundary: List[Polygon]) -> None:
+        """
+        Set the boundary polygon of the patch.
+        
+        Parameters
+        ----------
+        boundary : List[Polygon]
+            List of polygons representing the boundary.
+        """
+        self.vector_data['boundary'] = boundary
 
-Parameters
-----------
-    patch (GeoPatch): Geographical patch for which the precipitation is to be retrieved.
-    mode (str): Possible values: ['patch', 'point']. To specify whether to retrieve precipitation data for the entire patch or a single point.
+    def get_bbox(self) -> List[float]:
+        """
+        Get the bounding box coordinates of the patch.
+        
+        Returns
+        -------
+        List[float]
+            Bounding box coordinates [min_lat, max_lat, min_lon, max_lon].
+        """
+        if 'bbox' in self.vector_data:
+            return self.vector_data['bbox']
+        
+    def set_bbox(self, bbox: List[float]) -> None:
+        """
+        Set the bounding box coordinates of the patch.
+        
+        Parameters
+        ----------
+        bbox : List[float]
+            Bounding box coordinates [min_lat, max_lat, min_lon, max_lon].
+        """
+        self.vector_data['bbox'] = bbox
 
-Returns:
-    GeoPatch: patch with precipitation as raster data.
-    float, GeoPatch: value of the precipitation and the GeoPatch with a data point added for visualization, with the precipitation value (if mode == 'point')
+    def get_location(self) -> List[float]:
+        """
+        Get the latitude and longitude of the patch.
+        
+        Returns
+        -------
+        List[float]
+            Latitude and longitude.
+        """
+        if 'location' in self.vector_data:
+            return self.vector_data['location']
+        return None
+    
+    def set_location(self, location: List[float]) -> None:
+        """
+        Set the latitude and longitude of the patch.
+        
+        Parameters
+        ----------
+        location : List[float]
+            Latitude and longitude.
+        """
+        self.vector_data['location'] = location
 
-temperature_expert(patch, mode)
-Retrieves temperature values (Celcius) throughout a geographical patch as raster data, or at the central location of a patch based on mode.
+def imputation_expert(patch: GeoPatch) -> GeoPatch:
+    '''
+    Impute missing values in a patch using interpolation.
 
-Parameters
-----------
-    patch (GeoPatch): Geographical patch for which the temperature is to be retrieved.
-    mode (str): Possible values: ['patch', 'point']. To specify whether to retrieve temperature data for the entire patch or a single point.
+    Parameters
+    ----------
+        patch (GeoPatch): Input patch with missing values represented as NaN.
 
-Returns:
-    GeoPatch: patch with temperature as raster data.
-    float, GeoPatch: value of the temperature and the GeoPatch with a data point added for visualization, with the temperature value (if mode == 'point')
+    Returns
+    -------
+        GeoPatch: Patch with missing values imputed.
+    '''
 
-air_quality_expert(patch, parameter, mode)
-Retrieves a particular air quality parameter throughout a geographical patch as raster data, or at the central location of a patch based on mode.
+def correlation_expert(patch1: GeoPatch, patch2: GeoPatch) -> float:
+    '''
+    Cross-correlate the raster data within two input patches.
 
-Parameters
-----------
-    patch (GeoPatch): Geographical patch for which the air quality index is to be evaluated. patch has latitude and longitude information.
-    parameter (str): The air quality parameter to be retrieved. Possible values: ['co', 'no2', 'o3', 'so2', 'pm2_5', 'pm10', 'us-epa-index']
-    mode (str): Possible values: ['patch', 'point']. To specify whether to retrieve air quality data for the entire patch or a single point.
+    Parameters
+    ----------
+        patch1 (GeoPatch): First patch.
+        patch2 (GeoPatch): Second patch.
 
-Returns:
-    GeoPatch: patch with the chosen air quality parameter plotted as raster data accessible as GeoPatch.raster_data['data'] (if mode == 'patch')
-    float, GeoPatch: value of the air quality parameter and the GeoPatch with a data point added for visualization, with the air quality parameter value (if mode == 'point')
+    Returns
+    -------
+        float: Value of correlation between the raster data in patch1 and patch2
+    '''
 
-elevation_expert(patch, mode)
-Retrieves elevation values throughout a geographical patch as raster data, or at the central location of a patch based on mode.
+def data_to_text_expert(data: any) -> str:
+    '''
+    Computes the string representation for any input data.
 
-Parameters
-----------
-    patch (GeoPatch): Geographical patch for which the elevation is to be retrieved.
-    mode (str): Possible values: ['patch', 'point']. To specify whether to retrieve elevation data for the entire patch or a single point.
+    Parameters
+    ----------
+        data (any): Input data which is to be represented as a string.
 
-Returns:
-    GeoPatch: patch with elevation (m) as raster data. (if mode == 'patch')
-    float, GeoPatch: value of the elevation and the GeoPatch with a data point added for visualization, with the elevation value (if mode == 'point')
+    Returns
+    -------
+        str: String representation of the input data.
+    '''
 
-imputation_expert(patch)
-Impute missing values in a patch using interpolation.
+def threshold_expert(patch: GeoPatch, threshold: float, mode: str = 'greater', relative=True) -> GeoPatch:
+    '''
+    Threshold the raster data within a GeoPatch by a percent threshold.
 
-Parameters
-----------
-    patch (GeoPatch): Input patch with missing values represented as NaN.
+    Parameters
+    ----------
+        patch (GeoPatch): A GeoPatch whose raster data is to be thresholded.
+        threshold (float): Value between 0.0 and 1.0, the percent threshold.
+        mode (str): ('greater', 'less') Mode specifying the truth of a pixel value when compared to the threshold.
+        relative (bool): Whether to use a percent or absolute threshold.
 
-Returns:
-    GeoPatch: Patch with missing values imputed.
+    Returns
+    -------
+        GeoPatch: Patch with thresholded raster data, RasterType of the GeoPatch.raster_data changes to RasterType.binary
+    '''
 
-correlation_expert(patch1, patch2)
-Cross-correlate the raster data within two input patches.
+def intersection_expert(patch1: GeoPatch, patch2: GeoPatch, mode='raster') -> GeoPatch:
+    '''
+    Perform intersection between the vector or raster data within two geographical patches. 
+    If raster intersection is to be performed, both patches should have RasterType.binary and cover identical geographical regions.
 
-Parameters
-----------
-    patch1 (GeoPatch): First patch.
-    patch2 (GeoPatch): Second patch.
+    Parameters
+    ----------
+        patch1 (GeoPatch): First patch
+        patch2 (GeoPatch): Second patch
+        mode (str): Intersection mode, either 'vector' or 'raster'
 
-Returns:
-    float: Value of correlation between the raster data in patch1 and patch2
+    Returns
+    -------
+        GeoPatch: with required intersection present within vector or raster data.
+    '''
 
-data_to_text_expert(data)
-Computes the string representation for any input data.
+def patch_visualization_expert(patch: GeoPatch) -> None:
+    '''
+    Visualize the vector and raster data within GeoPatch on a map
 
-Parameters
-----------
-    data (any): Input data which is to be represented as a string.
+    Parameters
+    ----------
+        patch (Union[GeoPatch, None]): A GeoPatch with vector/raster data to be visualized.
 
-Returns:
-    str: String representation of the input data.
+    Returns
+    -------
+        None
+    '''
 
-patch_visualization_expert(patch)
-Visualize the vector and raster data within GeoPatch on a map. Use for showcasing final results.
+def point_location_expert(name: str) -> GeoPatch:
+    '''
+    Finds the geographic location of any place on the map by its name.
 
-Parameters
-----------
-    patch (Union[GeoPatch, None]): A GeoPatch with vector/raster data to be visualized.
+    Parameters
+    ----------
+        name (str): Name of the place for which the geo-location has to be found.
 
-Returns:
-    None
+    Returns
+    -------
+        GeoPatch: Geographical patch with the location and boundary of the place.
+    '''
 
-threshold_expert(patch, threshold, mode, relative)
-Threshold the raster data within a GeoPatch by a percent threshold.
+def patch_location_expert(name: str) -> GeoPatch:
+    '''
+    Finds the geographic location and boundary polygon of any place on the map by its name.
 
-Parameters
-----------
-    patch (GeoPatch): A GeoPatch whose raster data is to be thresholded.
-    threshold (float): Value between 0.0 and 1.0, the percent threshold.
-    mode (str): ('greater', 'less') Mode specifying the truth of a pixel value when compared to the threshold.
-    relative (bool): Whether to use a percent or absolute threshold.
+    Parameters
+    ----------
+        name (str): Name of the place for which the geo location has to be found
 
-Returns:
-    GeoPatch: Patch with thresholded raster data, RasterType of the GeoPatch.raster_data changes to RasterType.binary
+    Returns
+    -------
+        GeoPatch: GeoPatch containing the location and boundary path of the found place.
+    '''
 
-intersection_expert(patch1, patch2, mode)
-Perform intersection between the vector or raster data within two geographical patches. 
-If raster intersection is to be performed, both patches should have RasterType.binary and cover identical geographical regions.
+def humidity_expert(patch: GeoPatch, mode: str = 'patch') -> Union[GeoPatch, Tuple[float, GeoPatch]]:
+    '''
+    Retrieves humidity (%) values throughout a geographical patch as raster data, or at the central location of a patch based on mode.
 
-Parameters
-----------
-    patch1 (GeoPatch): First patch
-    patch2 (GeoPatch): Second patch
-    mode (str): Intersection mode, either 'vector' or 'raster'
+    Parameters
+    ----------
+        patch (GeoPatch): Geographical patch for which the humidity is to be retrieved.
+        mode (str): Possible values: ['patch', 'point']. To specify whether to retrieve humidity data for the entire patch or a single point.
 
-Returns:
-    GeoPatch: with required intersection present within vector or raster data.
+    Returns
+    -------
+        GeoPatch: patch with average precipitation in ml as raster data. (if mode == 'patch')
+        float, GeoPatch: value of the humidity and the GeoPatch with a data point added for visualization, with the humidity value (if mode == 'point')
+    '''
 
-elaborate_expert(question, answer, context)
-Impute missing values in a patch using interpolation.
+def precipitation_expert(patch: GeoPatch, mode: str = 'patch') -> Union[GeoPatch, Tuple[float, GeoPatch]]:
+    '''
+    Retrieves precipitation values in mm throughout a geographical patch as raster data, or at the central location of a patch based on mode.
 
-Parameters
-----------
-    question (str): The query that was asked by the user
-    answer (str): The final answer obtained as a result of code generation and execution
-    context (): Any intermediate results obtained during code execution, important for explaining the thought process behind the query solution
+    Parameters
+    ----------
+        patch (GeoPatch): Geographical patch for which the precipitation is to be retrieved.
+        mode (str): Possible values: ['patch', 'point']. To specify whether to retrieve precipitation data for the entire patch or a single point.
 
-Returns:
-    str: Elaborate answer explaining the computation steps and final answer
+    Returns
+    -------
+        GeoPatch: patch with precipitation as raster data.
+        float, GeoPatch: value of the precipitation and the GeoPatch with a data point added for visualization, with the precipitation value (if mode == 'point')
+    '''
 
+def temperature_expert(patch: GeoPatch, mode: str = 'patch') -> Union[GeoPatch, Tuple[float, GeoPatch]]:
+    '''
+    Retrieves temperature values (Celcius) throughout a geographical patch as raster data, or at the central location of a patch based on mode.
+
+    Parameters
+    ----------
+        patch (GeoPatch): Geographical patch for which the temperature is to be retrieved.
+        mode (str): Possible values: ['patch', 'point']. To specify whether to retrieve temperature data for the entire patch or a single point.
+
+    Returns
+    -------
+        GeoPatch: patch with temperature as raster data.
+        float, GeoPatch: value of the temperature and the GeoPatch with a data point added for visualization, with the temperature value (if mode == 'point')
+    '''
+
+def air_quality_expert(patch: GeoPatch, parameter: str = 'pm2_5', mode: str = 'patch') -> Union[GeoPatch, Tuple[float, GeoPatch]]:
+    '''
+    Retrieves a particular air quality parameter throughout a geographical patch as raster data, or at the central location of a patch based on mode.
+
+    Parameters
+    ----------
+        patch (GeoPatch): Geographical patch for which the air quality index is to be evaluated. patch has latitude and longitude information.
+        parameter (str): The air quality parameter to be retrieved. Possible values: ['co', 'no2', 'o3', 'so2', 'pm2_5', 'pm10', 'us-epa-index']
+        mode (str): Possible values: ['patch', 'point']. To specify whether to retrieve air quality data for the entire patch or a single point.
+
+    Returns
+    -------
+        GeoPatch: patch with the chosen air quality parameter plotted as raster data accessible as GeoPatch.raster_data['data'] (if mode == 'patch')
+        float, GeoPatch: value of the air quality parameter and the GeoPatch with a data point added for visualization, with the air quality parameter value (if mode == 'point')
+    '''
+    param_info = {
+        'co': ('Carbon Monoxide (μg/m3)', 'Greys'),
+        'no2': ('Nitrogen dioxide (μg/m3)', 'Oranges'),
+        'o3': ('Ozone (μg/m3)', 'Blues'),
+        'so2': ('Sulfur Dioxide (μg/m3)', 'YlOrBr'),
+        'pm2_5': ('PM2.5 (μg/m3)', 'magma'),
+        'pm10': ('PM10 (μg/m3)', 'magma'),
+        'us-epa-index': ('US - EPA Index', 'magma')
+    }
+
+def elevation_expert(patch: GeoPatch, mode: str = 'patch') -> Union[GeoPatch, Tuple[float, GeoPatch]]:
+    '''
+    Retrieves elevation values throughout a geographical patch as raster data, or at the central location of a patch based on mode.
+
+    Parameters
+    ----------
+        patch (GeoPatch): Geographical patch for which the elevation is to be retrieved.
+        mode (str): Possible values: ['patch', 'point']. To specify whether to retrieve elevation data for the entire patch or a single point.
+
+    Returns
+    -------
+        GeoPatch: patch with elevation (m) as raster data. (if mode == 'patch')
+        float, GeoPatch: value of the elevation and the GeoPatch with a data point added for visualization, with the elevation value (if mode == 'point')
+    '''
+
+def elaborate_expert(question: str, answer: str, context: List[str] = None) -> str:
+    '''
+    Returns an elaborate answer explaining the computation steps and final answer
+
+    Parameters
+    ----------
+        question (str): The query that was asked by the user
+        answer (str): The final answer obtained as a result of code generation and execution
+        context (List[str]): Any intermediate results obtained during code execution, important for explaining the thought process behind the query solution
+
+    Returns
+    -------
+        str: Elaborate answer explaining the computation steps and final answer
+    '''
