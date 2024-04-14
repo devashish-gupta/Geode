@@ -2,7 +2,7 @@
 
 A zero-shot geospatial question answering agent with precise spatiotemporal retrieval and explicit reasoning capabilities!
 
-![Geode home](/assets/home.png)
+![Geode home](/assets/example.png)
 
 ## Capabilities
 
