@@ -1,4 +1,4 @@
-# **Geode** 
+# **Geode**
 
 A zero-shot geospatial question answering agent with precise spatiotemporal retrieval and explicit reasoning capabilities!
 
@@ -10,7 +10,7 @@ Geode is capable of answering geospatial queries that require complex reasoning 
 
 🔍 **Query: Which one of the following countries is larger, Russia or Greenland?**
 
-📝 **Generated code**:
+🪨 **Generated code**:
 ```python
 def compute_answer(query: str):
     # Find the geographic locations and boundaries of Russia and Greenland
@@ -40,7 +40,7 @@ result = compute_answer(query)
 
 🔍 **Query: What is air quality like in the city that is known for the Eiffel tower?**
 
-📝 **Generated code**:
+🪨 **Generated code**:
 ```python
 def compute_answer(query: str):
     # Find the geographic location and boundary of the city known for the Eiffel Tower
@@ -60,7 +60,7 @@ result = compute_answer(query)
 
 🔍 **Query: Which state in the United states has the highest average humidity?**
 
-📝 **Generated code**:
+🪨 **Generated code**:
 ```python
 def compute_answer(query: str):
     # List of all state names in the United States
@@ -105,7 +105,7 @@ result = compute_answer(query) # make sure you call the compute_answer function 
 
 🔍 **Query: If we were to mark Smyrna, Sandy Springs and Norcross as points on the map, would they form a triangle?**
 
-📝 **Generated code**:
+🪨 **Generated code**:
 ```python
 def compute_answer(query: str):
     # Find the geographic locations of Smyrna, Sandy Springs, and Norcross
@@ -153,7 +153,7 @@ result = compute_answer(query)
 
 🔍 **Query: Can you return an adjacency matrix representing the adjacency of state borders, for states in the US?**
 
-📝 **Generated code**:
+🪨 **Generated code**:
 ```python
 def compute_answer(query: str):
     # Finding the geographic location and boundary polygons of US states
