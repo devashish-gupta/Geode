@@ -1,4 +1,5 @@
-# **Geode**
+# **Geode** 
+
 A zero-shot geospatial question answering agent with precise spatiotemporal retrieval and explicit reasoning capabilities!
 
 ![Geode home](/assets/home.png)
@@ -7,9 +8,9 @@ A zero-shot geospatial question answering agent with precise spatiotemporal retr
 
 Geode is capable of answering geospatial queries that require complex reasoning and algorithmic computation. Here are a few examples of how Geode leverages its expert pool to answer geospatial queries.
 
-**Query: Which one of the following countries is larger, Russia or Greenland?**
+🔍 **Query: Which one of the following countries is larger, Russia or Greenland?**
 
-**Generated code**:
+📝 **Generated code**:
 ```python
 def compute_answer(query: str):
     # Find the geographic locations and boundaries of Russia and Greenland
@@ -37,9 +38,9 @@ def compute_answer(query: str):
 result = compute_answer(query)
 ```
 
-**Query: What is air quality like in the city that is known for the Eiffel tower?**
+🔍 **Query: What is air quality like in the city that is known for the Eiffel tower?**
 
-**Generated code**:
+📝 **Generated code**:
 ```python
 def compute_answer(query: str):
     # Find the geographic location and boundary of the city known for the Eiffel Tower
@@ -57,9 +58,9 @@ def compute_answer(query: str):
 result = compute_answer(query)
 ```
 
-**Query: Which state in the United states has the highest average humidity?**
+🔍 **Query: Which state in the United states has the highest average humidity?**
 
-**Generated code**:
+📝 **Generated code**:
 ```python
 def compute_answer(query: str):
     # List of all state names in the United States
@@ -102,9 +103,9 @@ def compute_answer(query: str):
 result = compute_answer(query) # make sure you call the compute_answer function at the end and store the output in a variable called result
 ```
 
-**Query: If we were to mark Smyrna, Sandy Springs and Norcross as points on the map, would they form a triangle?**
+🔍 **Query: If we were to mark Smyrna, Sandy Springs and Norcross as points on the map, would they form a triangle?**
 
-**Generated code**:
+📝 **Generated code**:
 ```python
 def compute_answer(query: str):
     # Find the geographic locations of Smyrna, Sandy Springs, and Norcross
@@ -150,9 +151,9 @@ def check_triangle_formation(points):
 result = compute_answer(query)
 ```
 
-**Query: Can you return an adjacency matrix representing the adjacency of state borders, for states in the US?**
+🔍 **Query: Can you return an adjacency matrix representing the adjacency of state borders, for states in the US?**
 
-**Generated code**:
+📝 **Generated code**:
 ```python
 def compute_answer(query: str):
     # Finding the geographic location and boundary polygons of US states
