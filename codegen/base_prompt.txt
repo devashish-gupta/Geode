@@ -66,7 +66,6 @@ class GeoPatch():
     '''
     def __init__(
             self, 
-            type: PatchType,
             raster_data: Union[Image.Image, np.ndarray] = None, 
             vector_data: Dict = None) -> None:
         '''
@@ -74,11 +73,9 @@ class GeoPatch():
         
         Parameters
         ----------
-        type (PatchType): Type of the geographical patch.
         raster_data (Union[Image.Image, np.ndarray]): Raster data and related information (optional)
         vector_data (Dict): Vector data and related information (optional)
         '''
-        self.type = type
         self.raster_data = raster_data
         self.vector_data = vector_data
 
@@ -373,9 +370,9 @@ You are a powerful code generation model which can solve geospatial queries usin
 Please write an implementation for a function 'compute_answer' using the expert API calls and classes you have access to, such that the answer to the query is obtained:
 
 # Query:
-{}
+QUERY_TAG
 
-# Your code should be exactly in this format:
+# Your output should be exactly in this format and should not include any text before or after:
 def compute_answer(query: str):
     # implementation using expert API calls here
 
@@ -383,7 +380,4 @@ def compute_answer(query: str):
     return answer, patch 
 result = compute_answer(query) # make sure you call the compute_answer function at the end and store the output in a variable called result
 
-# Here are some examples of queries and the corresponding code that solves the query:
-Query:
-Code:
 
