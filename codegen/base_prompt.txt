@@ -148,7 +148,7 @@ class GeoPatch():
         
         Returns
         -------
-        List[float]: Bounding box coordinates [min_lat, max_lat, min_lon, max_lon]
+        List[float]: Bounding box coordinates, format: [min_lat, max_lat, min_lon, max_lon]
         '''
         if 'bbox' in self.vector_data:
             return self.vector_data['bbox']
@@ -164,6 +164,15 @@ class GeoPatch():
         if 'location' in self.vector_data:
             return self.vector_data['location']
         return None
+
+    def get_points(self) -> List[DataPoint]:
+        '''
+        Get the data points associated with the locations within the patch.
+
+        Returns
+        -------
+        List[DataPoint]: list of data points containing latitude, longitude, name and data.
+        '''
     
     
 # Here are all the geospatial experts you have access to as API calls:
@@ -265,7 +274,7 @@ def intersection_expert(patch1: GeoPatch, patch2: GeoPatch, mode: str = 'raster'
         GeoPatch: with required intersection present within vector or raster data.
     '''
 
-def humidity_expert(patch: GeoPatch, mode: str = 'patch') -> Union[GeoPatch, Tuple[float, GeoPatch]]:
+def humidity_expert(patch: GeoPatch, mode: str = 'patch') -> GeoPatch:
     '''
     Retrieves humidity (%) values throughout a geographical patch as raster data, or at the central location of a patch based on mode.
 
@@ -276,11 +285,11 @@ def humidity_expert(patch: GeoPatch, mode: str = 'patch') -> Union[GeoPatch, Tup
 
     Returns
     -------
-        GeoPatch: patch with average precipitation in ml as raster data. (if mode == 'patch')
-        float, GeoPatch: value of the humidity and the GeoPatch with a data point added for visualization, with the humidity value (if mode == 'point')
+        GeoPatch: patch with percent humidity as raster data, if mode == 'patch' 
+            or else patch with patch.vector_data['points'][0].data as the humidity value, if mode == 'point'
     '''
 
-def precipitation_expert(patch: GeoPatch, mode: str = 'patch') -> Union[GeoPatch, Tuple[float, GeoPatch]]:
+def precipitation_expert(patch: GeoPatch, mode: str = 'patch') -> GeoPatch:
     '''
     Retrieves precipitation values in mm throughout a geographical patch as raster data, or at the central location of a patch based on mode.
 
@@ -291,11 +300,11 @@ def precipitation_expert(patch: GeoPatch, mode: str = 'patch') -> Union[GeoPatch
 
     Returns
     -------
-        GeoPatch: patch with precipitation as raster data.
-        float, GeoPatch: value of the precipitation and the GeoPatch with a data point added for visualization, with the precipitation value (if mode == 'point')
+        GeoPatch: patch with precipitation (mm) as raster data, if mode == 'patch' 
+            or else patch with patch.vector_data['points'][0].data as the precipitation value, if mode == 'point'
     '''
 
-def temperature_expert(patch: GeoPatch, mode: str = 'patch') -> Union[GeoPatch, Tuple[float, GeoPatch]]:
+def temperature_expert(patch: GeoPatch, mode: str = 'patch') -> GeoPatch:
     '''
     Retrieves temperature values (Celcius) throughout a geographical patch as raster data, or at the central location of a patch based on mode.
 
@@ -306,11 +315,11 @@ def temperature_expert(patch: GeoPatch, mode: str = 'patch') -> Union[GeoPatch, 
 
     Returns
     -------
-        GeoPatch: patch with temperature as raster data.
-        float, GeoPatch: value of the temperature and the GeoPatch with a data point added for visualization, with the temperature value (if mode == 'point')
+        GeoPatch: patch with temperature as raster data, if mode == 'patch' 
+            or else patch with patch.vector_data['points'][0].data as the temperature value, if mode == 'point'
     '''
 
-def air_quality_expert(patch: GeoPatch, parameter: str = 'pm2_5', mode: str = 'patch') -> Union[GeoPatch, Tuple[float, GeoPatch]]:
+def air_quality_expert(patch: GeoPatch, parameter: str = 'pm2_5', mode: str = 'patch') -> GeoPatch:
     '''
     Retrieves a particular air quality parameter throughout a geographical patch as raster data, or at the central location of a patch based on mode.
 
@@ -322,8 +331,8 @@ def air_quality_expert(patch: GeoPatch, parameter: str = 'pm2_5', mode: str = 'p
 
     Returns
     -------
-        GeoPatch: patch with the chosen air quality parameter plotted as raster data accessible as GeoPatch.raster_data['data'] (if mode == 'patch')
-        float, GeoPatch: value of the air quality parameter and the GeoPatch with a data point added for visualization, with the air quality parameter value (if mode == 'point')
+        GeoPatch: patch with the chosen air quality parameter plotted as raster data accessible as GeoPatch.raster_data['data'], if mode == 'patch'
+            or else patch with patch.vector_data['points'][0].data as the air quality parameter value, if mode == 'point'
     '''
     param_info = {
         'co': ('Carbon Monoxide (μg/m3)', 'Greys'),
@@ -335,7 +344,7 @@ def air_quality_expert(patch: GeoPatch, parameter: str = 'pm2_5', mode: str = 'p
         'us-epa-index': ('US - EPA Index', 'magma')
     }
 
-def elevation_expert(patch: GeoPatch, mode: str = 'patch') -> Union[GeoPatch, Tuple[float, GeoPatch]]:
+def elevation_expert(patch: GeoPatch, mode: str = 'patch') -> GeoPatch:
     '''
     Retrieves elevation values throughout a geographical patch as raster data, or at the central location of a patch based on mode.
 
@@ -346,8 +355,8 @@ def elevation_expert(patch: GeoPatch, mode: str = 'patch') -> Union[GeoPatch, Tu
 
     Returns
     -------
-        GeoPatch: patch with elevation (m) as raster data. (if mode == 'patch')
-        float, GeoPatch: value of the elevation and the GeoPatch with a data point added for visualization, with the elevation value (if mode == 'point')
+        GeoPatch: patch with elevation (m) as raster data, if mode == 'patch'
+            or else patch with patch.vector_data['points'][0].data as the temperature value, if mode == 'point'
     '''
 
 def elaborate_expert(question: str, answer: str, context: List[str] = None) -> str:
@@ -367,7 +376,7 @@ def elaborate_expert(question: str, answer: str, context: List[str] = None) -> s
 
 # Instructions:
 You are a powerful code generation model which can solve geospatial queries using the experts you have access to. 
-Please write an implementation for a function 'compute_answer' using the expert API calls and classes you have access to, such that the answer to the query is obtained:
+Please write an implementation for a function 'compute_answer' using the expert API calls and classes you have access to, such that the answer to the query is obtained and returned:
 
 # Query:
 QUERY_TAG
