@@ -132,15 +132,24 @@ class GeoPatch():
         '''
         self.vector_data = vector_data
 
-    def get_boundary(self) -> List[Polygon]:
+    def get_boundary_polygons(self) -> List[Polygon]:
         '''
-        Get the boundary polygon of the geographic location represented by the patch.
+        Get a list of boundary polygons of the geographic location represented by the patch.
         
         Returns
         -------
         List[Polygon]: List of shapely.geometry.Polygon representing the boundary
         '''
         return self.vector_data['boundary']
+
+    def get_area(self) -> float:
+        '''
+        Gets boundary area for the patch in million sq km.
+
+        Returns
+        -------
+        float: Area of the patch in million sq km.
+        '''
 
     def get_bbox(self) -> List[float]:
         '''
@@ -165,7 +174,7 @@ class GeoPatch():
             return self.vector_data['location']
         return None
 
-    def get_points(self) -> List[DataPoint]:
+    def get_data_points(self) -> List[DataPoint]:
         '''
         Get the data points associated with the locations within the patch.
 
@@ -357,21 +366,6 @@ def elevation_expert(patch: GeoPatch, mode: str = 'patch') -> GeoPatch:
     -------
         GeoPatch: patch with elevation (m) as raster data, if mode == 'patch'
             or else patch with patch.vector_data['points'][0].data as the temperature value, if mode == 'point'
-    '''
-
-def elaborate_expert(question: str, answer: str, context: List[str] = None) -> str:
-    '''
-    Returns an elaborate answer explaining the computation steps and final answer
-
-    Parameters
-    ----------
-        question (str): The query that was asked by the user
-        answer (str): The final answer obtained as a result of code generation and execution
-        context (List[str]): Any intermediate results obtained during code execution, important for explaining the thought process behind the query solution
-
-    Returns
-    -------
-        str: Elaborate answer explaining the computation steps and final answer
     '''
 
 # Instructions:
