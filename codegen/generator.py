@@ -1,12 +1,18 @@
 from transformers import AutoModelForCausalLM, AutoTokenizer, pipeline
+import torch
 
 class Generator():
     def __init__(self):
-        self.name = "TheBloke/WizardCoder-Python-13B-V1.0-GPTQ"
+        # self.name = "TheBloke/WizardCoder-Python-13B-V1.0-GPTQ"
+        self.name = "WizardLM/WizardLM-13B-V1.2"
+        print(torch.cuda.get_device_name(0))
         self.model = AutoModelForCausalLM.from_pretrained(self.name,
-                                             device_map="auto",
+                                             device_map="cpu",
+                                            #  device=0,
                                              trust_remote_code=False,
                                              revision="main")
+        # self.model.to(torch.device('cpu'))
+        self.model.to('cpu').float()
         self.tokenizer = AutoTokenizer.from_pretrained(self.name, use_fast=True)
         self.pipeline = pipeline(
                             "text-generation",
@@ -20,7 +26,7 @@ class Generator():
                             repetition_penalty=1.1
                         )
         
-        with open('base_prompt.txt', 'r') as f:
+        with open('codegen/base_prompt.txt', 'r') as f:
             self.base_prompt = f.read()
         
     def generate(self, user_query: str):
@@ -34,8 +40,9 @@ class Generator():
         '''
         Incorporate user query into the prompt template
         '''
-        # return f'{base_prompt}'
-        pass
+        prompt = self.base_prompt
+        prompt = prompt.replace('QUERY_TAG', user_query)
+        return prompt
 
 
     

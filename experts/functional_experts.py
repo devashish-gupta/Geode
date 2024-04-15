@@ -4,10 +4,14 @@ import numpy as np
 from .base import GeoPatch, RasterType
 from scipy.interpolate import griddata
 import folium
-import requests as req
 from streamlit_folium import folium_static
 from folium.plugins import Fullscreen
 import matplotlib.pyplot as plt
+from openai import OpenAI
+import anthropic
+from dotenv import load_dotenv
+import os
+
 
 
 def imputation_expert(patch: GeoPatch) -> GeoPatch:
@@ -16,7 +20,7 @@ def imputation_expert(patch: GeoPatch) -> GeoPatch:
 
     Parameters
     ----------
-        patch (GeoPatch): Input patch with missing values represented as NaN.
+        patch (GeoPatch): Input patch with missing values within patch.raster_data['data'] represented as NaN.
 
     Returns
     -------
@@ -110,15 +114,15 @@ def data_to_text_expert(data: any) -> str:
     return str_repr
 
 
-def threshold_expert(patch: GeoPatch, threshold: float, mode: str = 'greater', relative=True) -> GeoPatch:
+def threshold_expert(patch: GeoPatch, threshold: float, mode: str = 'greater', relative: bool = True) -> GeoPatch:
     '''
-    Threshold the raster data within a GeoPatch by a percent threshold.
+    Threshold the raster data within a GeoPatch by a percent or absolute threshold.
 
     Parameters
     ----------
         patch (GeoPatch): A GeoPatch whose raster data is to be thresholded.
         threshold (float): Value between 0.0 and 1.0, the percent threshold.
-        mode (str): ('greater', 'less') Mode specifying the truth of a pixel value when compared to the threshold.
+        mode (str): Possible values: ['greater', 'less']. Mode specifying the truth of a pixel value when compared to the threshold.
         relative (bool): Whether to use a percent or absolute threshold.
 
     Returns
@@ -155,7 +159,7 @@ def threshold_expert(patch: GeoPatch, threshold: float, mode: str = 'greater', r
     return thresholded_patch
 
 
-def intersection_expert(patch1: GeoPatch, patch2: GeoPatch, mode='raster') -> GeoPatch:
+def intersection_expert(patch1: GeoPatch, patch2: GeoPatch, mode: str = 'raster') -> GeoPatch:
     '''
     Perform intersection between the vector or raster data within two geographical patches. 
     If raster intersection is to be performed, both patches should have RasterType.binary and cover identical geographical regions.
@@ -347,26 +351,94 @@ def patch_visualization_expert(patch: GeoPatch) -> None:
     folium_static(m, width=470, height=200)
 
     
-def code_gen_expert(query: str) -> str:
+# def code_gen_expert(query: str) -> str:
+#     '''
+#     Function to facilitate talking to code generation backend and generate code
+
+#     Arguments:
+#         query (str): User query as typed in the chat input
+#     '''
+#     # assuming backend is launched first
+#     url = f"http://localhost:5000/generate" 
+#     headers = {'Content-Type': 'application/json'}
+#     data = {'user_query': query}
+
+#     # sending the request to local backend
+#     try:
+#         response = req.post(url, headers=headers, json=data)
+#         response.raise_for_status()
+#         code = response.json()['generated_code']
+#         return code
+
+#     except req.exceptions.RequestException as e:
+#         print("Error:", e)
+#         return None
+    
+
+# def code_gen_expert(query: str) -> str: # openai
+#     '''
+#     Function to facilitate talking to code generation backend and generate code
+
+#     Arguments:
+#         query (str): User query as typed in the chat input
+#     '''
+
+#     with open('codegen/base_prompt.txt', 'r') as f:
+#         prompt = f.read()
+#         prompt = prompt.replace('QUERY_TAG', query)
+
+#     load_dotenv()
+#     openai = OpenAI(api_key=os.environ['OPENAI_API_KEY'])
+
+#     response = openai.chat.completions.create(
+#         model="gpt-3.5-turbo-0125",
+#         messages=[
+#             {"role": "user", "content": prompt},
+#         ],
+#         n=1
+#     )
+
+#     generated_code = response.choices[0].message['content'].strip()
+#     return generated_code
+
+
+def code_gen_expert(query: str, model='gpt-3.5-turbo') -> str:
     '''
     Function to facilitate talking to code generation backend and generate code
 
-    Arguments:
+    Arguments
+    ---------
         query (str): User query as typed in the chat input
+        model (str): Possible values ['gpt-3-turbo', 'claude-3-opus-20240229']
     '''
-    # assuming backend is launched first
-    url = f"http://localhost:5000/generate" 
-    headers = {'Content-Type': 'application/json'}
-    data = {'user_query': query}
 
-    # sending the request to local backend
-    try:
-        response = req.post(url, headers=headers, json=data)
-        response.raise_for_status()
-        code = response.json()['generated_code']
+    # fusing with base prompt
+    with open('codegen/base_prompt.txt', 'r') as f:
+        prompt = f.read()
+        prompt = prompt.replace('QUERY_TAG', query)
+
+    load_dotenv()
+    if model == 'claude-3-opus':
+        response = anthropic.Anthropic(api_key=os.environ['CLAUDE_API_KEY']).messages.create(
+            model="claude-3-opus-20240229",
+            max_tokens=2048,
+            messages=[
+                {"role": "user", "content": prompt}
+            ]
+        )
+        code = response.content[0].text
+        code = code.replace('(query)', f"('{query}')")
+        print(code)
         return code
-
-    except req.exceptions.RequestException as e:
-        print("Error:", e)
-        return None
     
+    elif model == 'gpt-3.5-turbo':
+        openai = OpenAI(api_key=os.environ['OPENAI_API_KEY'])
+        response = openai.chat.completions.create(
+            model="gpt-3.5-turbo-0125",
+            messages=[
+                {"role": "user", "content": prompt},
+            ],
+            n=1
+        )
+        code = response.choices[0].message.content
+        return code

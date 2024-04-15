@@ -17,7 +17,8 @@ global_style_string = '''
             height: 78.25vh;
         }
         .stCodeBlock {
-            height: 300px;
+            max-height: 300px;
+            border-radius: 8px;
             width: 100%;
             overflow-x: hidden;
         }
@@ -54,6 +55,10 @@ global_style_string = '''
             min-width: 0px;
         }
         iframe > div {
+            border: 1px solid red;
+        }
+        row-widget stSelectbox {
+            width: 50px;
             border: 1px solid red;
         }
     </style>

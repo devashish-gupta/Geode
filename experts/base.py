@@ -30,28 +30,34 @@ class DataPoint():
         self.name = name
         self.data = data
 
+    def __str__(self):
+        return f'DataPoint(name={self.name},\n\tPoint={self.point},\n\tdata={self.data}\n)'
+
 
 class GeoPatch():
     '''
-    Primary class that represents a geospatial patch with vector/raster data
+    Primary class representing a geospatial patch with vector/raster data.
 
     Attributes
     ----------
-        type (PatchType): Type of geographical patch based on the data it contains.
-        raster_data (dict): Stores raster data and related information
-            - 'name' (str): Name of the raster data stored 
-            - 'type' (RasterType): Type of raster data stored, whether color, non_color or binary
-            - 'colormap' (str): 
-            - 'data': np.ndarray
-        vector_data (dict):
-            - 'location' ([float, float]): latitude and longitude of the location that the patch represents (mandatory)
-            - 'bbox' (List[float]): [min_lat, max_lat, min_lon, max_lon] bounding box coordinates of the boundary of the patch (mandatory)
-            - 'points' (List[DataPoint]): Data points corresponding to the patch, displayed on the map (optional)
-            - 'boundary' (List[shapely.geometry.Polygon]): Boundary polygon of the patch (mandatory)
+    type: PatchType
+        Type of geographical patch based on the data it contains.
+    raster_data: dict
+        Stores raster data and related information.
+        - 'name' (str): Name of the raster data stored. (mandatory)
+        - 'type' (RasterType): Type of raster data stored, whether color, non_color, or binary (mandatory)
+        - 'colormap' (str): String representing a color name. (optional)
+        - 'data' (np.ndarray): NumPy array containing the raster data. (mandatory)
+    vector_data: dict
+        Stores vector data and related information.
+        - 'location' ([float, float]): Latitude and longitude of the location that the patch represents (mandatory).
+        - 'bbox' (List[float]): Bounding box coordinates of the boundary of the patch [min_lat, max_lat, min_lon, max_lon] (mandatory).
+        - 'points' (List[DataPoint]): Data points corresponding to the patch, displayed on the map (optional).
+        - 'boundary' (List[shapely.geometry.Polygon]): Boundary polygon of the patch (mandatory).
     '''
     def __init__(
             self, 
-            type: PatchType,
+            type: PatchType = PatchType.dual,
             raster_data: Union[Image.Image, np.ndarray] = None, 
             vector_data: Dict = None) -> None:
               
@@ -80,21 +86,37 @@ class GeoPatch():
     def __str__(self):
         return f"GeoPatch(\n\ttype = {self.type},\n\traster_data = {pformat(self.raster_data, indent=2)},\n\tvector_data = {pformat(self.vector_data, indent=2)}\n)"
 
-    # def get_type(self) -> PatchType:
-    #     return self.type
-
-    # def set_type(self, type: PatchType):
-    #     self.type = type
-
     # raster data related methods
     def get_raster_data(self) -> Dict:
         if self.raster_data is not None:
             return self.raster_data
         
     def set_raster_data(self, raster_data: Dict) -> None:
+        '''
+        Set the raster data for the GeoPatch.
+        
+        Parameters
+        ----------
+        raster_data : Dict
+            Raster data and related information.
+        '''
         self.raster_data = raster_data
 
     def set_raster_data_from_points(self, points: List[List[float]], name=None, type=None, colormap='gray') -> None:
+        '''
+        Sets the raster data across the patch from a list of points
+        
+        Parameters
+        ----------
+        points : List[List[float]]
+            List of points of the form [[lat0, lon0, value0], ...]
+        name : str, optional
+            Name of the raster data.
+        type : RasterType, optional
+            Type of the raster data. Possible values: [RasterType.color, RasterType.non_color, RasterType.binary]
+        colormap : str, optional
+            Colormap for the raster data.
+        '''
         # performing RBF interpolation
         coordinates = np.array([[point[0], point[1]] for point in points])
         values = np.array([point[2] for point in points])
@@ -132,15 +154,40 @@ class GeoPatch():
 
     # vector data related methods
     def get_vector_data(self) -> Dict:
+        '''
+        Get the vector data stored in the GeoPatch, potentially containing 'points', 'boundary', 'location', 'bbox'.
+        '''
         return self.vector_data
     
     def set_vector_data(self, vector_data) -> None:
         self.vector_data = vector_data
 
-    def get_boundary(self) -> List[Polygon]:
+    def get_boundary_polygons(self) -> List[Polygon]:
+        '''
+        Get the boundary polygon of the geographic location represented by the patch.
+        
+        Returns
+        -------
+        List[Polygon]
+            List of shapely.geometry.Polygon representing the boundary.
+        '''
         return self.vector_data['boundary']
+    
+    def get_area(self) -> float:
+        '''
+        Gets boundary area for the patch in million sq km.
 
-    def set_boundary(self, boundary: List[Polygon]) -> None:
+        Returns
+        -------
+        float: Area of the patch in million sq km.
+        '''
+        area = 0
+        for poly in self.get_boundary_polygons():
+            area += poly.area
+
+        return area
+
+    def set_boundary_polygons(self, boundary: List[Polygon]) -> None:
         self.vector_data['boundary'] = boundary
 
     def get_bbox(self) -> List[float]:
@@ -157,6 +204,17 @@ class GeoPatch():
     
     def set_location(self, location: List[float]) -> None:
         self.vector_data['location'] = location
+
+    def get_data_points(self) -> List[DataPoint]:
+        '''
+        Get the data points associated with the locations within the patch.
+
+        Returns
+        -------
+        List[DataPoint]: list of data points containing latitude, longitude, name and data.
+        '''
+        if 'points' in self.vector_data:
+            return self.vector_data['points']
 
 
     
