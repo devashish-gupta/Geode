@@ -1,5 +1,13 @@
 # **Geode**
 
+![python](https://img.shields.io/badge/Python-3776AB.svg?style=for-the-badge&logo=Python&logoColor=white)
+![streamlit](https://img.shields.io/badge/Streamlit-FF4B4B.svg?style=for-the-badge&logo=Streamlit&logoColor=white)
+![folium](https://img.shields.io/badge/Folium-77B829.svg?style=for-the-badge&logo=Folium&logoColor=white)
+![geopandas](https://img.shields.io/badge/GeoPandas-139C5A.svg?style=for-the-badge&logo=GeoPandas&logoColor=white)
+![osm](https://img.shields.io/badge/OpenStreetMap-7EBC6F.svg?style=for-the-badge&logo=OpenStreetMap&logoColor=white)
+![scipy](https://img.shields.io/badge/SciPy-8CAAE6.svg?style=for-the-badge&logo=SciPy&logoColor=white)
+
+
 A zero-shot geospatial question answering agent with precise spatiotemporal retrieval and explicit reasoning capabilities!
 
 ![Geode home](/assets/example.png)
